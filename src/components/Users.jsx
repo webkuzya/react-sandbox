@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useReducer, useState} from 'react';
 import cn from './Users.module.css'
 import Input from "./BS/Input";
 import Button from "./BS/Button";
@@ -11,11 +11,24 @@ export default function Users() {
     }
 
     const [users, setUsers] = useState([])
-    const [user, setUser] = useState(initUser)
+    //const [user, setUser] = useState(initUser)
+    const [user, dispatch] = useReducer(userReducer, initUser)
     const [isEdit, setIsEdit] = useState(false)
 
     const changeHandler = (key, val) => {
-        setUser({...user, [key]: val})
+        //setUser({...user, [key]: val})
+        dispatch({type: 'edit', payload: {key, val,}})
+    }
+
+    function userReducer(state, action) {
+        switch (action.type) {
+            case 'edit':
+                return {...state, [action.payload.key]: action.payload.val}
+            case 'set':
+                return action.payload
+            default:
+                break
+        }
     }
 
     const fetchUsers = async () => {
@@ -41,7 +54,8 @@ export default function Users() {
         }).then(res => {
             res.json()
             fetchUsers()
-            setUser(initUser)
+            //setUser(initUser)
+            dispatch({type: 'set', payload: initUser})
         })
     }
 
@@ -53,18 +67,21 @@ export default function Users() {
         }).then(res => {
             res.json()
             fetchUsers()
-            setUser(initUser)
+            //setUser(initUser)
+            dispatch({type: 'set', payload: initUser})
         })
     }
 
     const editUser = id => {
         setIsEdit(true)
-        setUser(users.find(x => x.id === id))
+        //setUser(users.find(x => x.id === id))
+        dispatch({type: 'set', payload: users.find(x => x.id === id)})
     }
 
     const resetUser = () => {
         setIsEdit(false)
-        setUser(initUser)
+        //setUser(initUser)
+        dispatch({type: 'set', payload: initUser})
     }
 
     useEffect(() => {

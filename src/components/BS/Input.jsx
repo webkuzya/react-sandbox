@@ -12,7 +12,7 @@ function Input(props) {
 
             <input
                 type={props.type || 'text'}
-                value={props.value}
+                value={props.value || ''}
                 id={id}
                 className={cn({
                     'form-control': true,
